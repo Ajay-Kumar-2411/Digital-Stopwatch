@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+
+        }
+
+        .stopwatch {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .stopwatch-container {
+            display: flex;
+        }
+
+        .stopwatch h2 {
+            margin-bottom: 80px;
+            color: orange;
+        }
+
+        .time {
+            width: 60px;
+            height: 60px;
+            font-size: 3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgb(158, 157, 157);
+            border: 1px solid grey;
+        }
+
+        .btn {
+            margin: 15px;
+            padding: 7px 15px;
+            background-color: orange;
+            color: black;
+            cursor: pointer;
+            transition: scale 0.2s;
+            border-radius: 5px;
+            border: 1px solid grey;
+        }
+        .buttons{
+            display: flex;
+        }
+        .hours:before{
+            content: "HH";
+            color: grey;
+            font-size: 15px;
+            position: absolute;
+            bottom: 55%;
+        }
+        .minutes:before{
+            content: "MM";
+            color: grey;
+            font-size: 15px;
+            position: absolute;
+            bottom: 55%;
+        }
+        .seconds:before{
+            content: "SS";
+            color: grey;
+            font-size: 15px;
+            position: absolute;
+            bottom: 55%;
+        }
+
+        .days:before{
+            content: "DD";
+            color: grey;
+            font-size: 15px;
+            position: absolute;
+            bottom: 55%;
+        }
+
+        
+        .btn:hover {
+            background-color: rgb(213, 141, 9);
+        }
+
+        .active {
+            scale: 0.95;
+        }
+
+        .disabled {
+            pointer-events: none;
+            background-color: grey;
+        }
+
+        /* PHONE SCREEN */
+        @media screen and (max-width: 580px) {
+            .buttons{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin-top: 50px;
+                width: 100%;
+            }
+
+            .btn{
+                width: 50%;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="stopwatch">
+            <div class="title">
+                <h2>STOPWATCH</h2>
+            </div>
+            <div class="stopwatch-container">
+                <div class="days time">
+
+                </div>
+                <div class="hours time">
+
+                </div>
+                <div class="minutes time">
+
+                </div>
+                <div class="seconds time">
+
+                </div>
+            </div>
+            <div class="buttons">
+                <button class="start btn">Start</button>
+                <button class="reset disabled btn">Reset</button>
+                <button class="stop disabled btn">Stop</button>
+                <button class="resume disabled btn">Resume</button>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+        let start = document.getElementsByClassName('start')[0];
+        let stop = document.getElementsByClassName('stop')[0];
+        let resume = document.getElementsByClassName('resume')[0];
+        let reset = document.getElementsByClassName('reset')[0];
+
+        let btn = document.querySelectorAll('.btn');
+
+        btn.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                button.classList.add("active");
+                setTimeout(() => {
+                    button.classList.remove("active");
+                }, 200);
+            });
+        });
+
+        // Stopwatch JavaScript
+
+        let seconds = document.getElementsByClassName('seconds')[0];
+        let minutes = document.getElementsByClassName('minutes')[0];
+        let hours = document.getElementsByClassName('hours')[0];
+        let days = document.getElementsByClassName('days')[0];
+
+        let s;
+        let m;
+        let h;
+        let d;
+
+        function defaultTimer() {
+            seconds.innerText = "00";
+            minutes.innerText = "00";
+            hours.innerText = "00";
+            days.innerText = "00";
+            s = 0;
+            m = 0;
+            h = 0;
+            d = 0;
+        }
+
+        defaultTimer();
+
+        let ss;
+        let mm;
+        let hh;
+        let dd;
+        let timerId;
+        let timer = false;
+
+        function stopwatch() {
+            if (timer) {
+                timerId = setInterval(() => {
+                    s = s + 1;
+
+                    if (s > 59) {
+                        m = m + 1;
+                        s = 0;
+                    }
+
+                    if (m == 59 && s > 59) {
+                        h = h + 1;
+                        m = 0;
+                        s = 0;
+                    }
+
+                    if (h == 23 && m == 59 && s > 59) {
+                        d = d + 1;
+                        h = 0;
+                        m = 0;
+                        s = 0;
+                    }
+
+                    ss = s;
+                    mm = m;
+                    hh = h;
+                    dd = d;
+
+                    if (s < 10) {
+                        ss = "0" + s;
+                    }
+
+                    if (m < 10) {
+                        mm = "0" + m;
+                    }
+
+                    if (h < 10) {
+                        hh = "0" + h;
+                    }
+
+                    if (d < 10) {
+                        dd = "0" + d;
+                    }
+
+                    seconds.innerText = ss;
+                    minutes.innerText = mm;
+                    hours.innerText = hh;
+                    days.innerText = dd;
+
+                }, 1000);
+                return timerId;
+            }
+
+        }
+
+        start.addEventListener("click", () => {
+            timer = true;
+            timerId = stopwatch();
+            start.classList.add("disabled");
+            stop.classList.remove("disabled");
+            reset.classList.remove("disabled");
+        });
+
+        stop.addEventListener("click", () => {
+            stop.classList.add("disabled");
+            resume.classList.remove("disabled");
+            clearInterval(timerId);
+        });
+
+
+        resume.addEventListener("click", () => {
+            stop.classList.remove("disabled");
+            resume.classList.add("disabled");
+            timerId = stopwatch();
+        });
+
+        reset.addEventListener("click", () => {
+            timer = false;
+            clearInterval(timerId);
+            defaultTimer();
+            reset.classList.add("disabled");
+            stop.classList.add("disabled");
+            start.classList.remove("disabled");
+        });
+    </script>
+</body>
+
+</html>
